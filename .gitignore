@@ -1,0 +1,70 @@
+# ============================================================
+# Organic Reverb System
+#   AcousticCore/  엔진 독립 Core (헤더 전용)
+#   Prototype/     Core 콘솔 테스트 (MSVC)
+#   ORS_Unreal/    Unreal Engine 5.8 프로젝트
+# ============================================================
+
+# ---- Unreal: 에디터/빌드가 다시 만드는 폴더 --------------------
+# 앞에 슬래시가 없으므로 ORS_Unreal/ 과 Plugins/*/ 아래 어디서든 적용된다
+Binaries/
+Intermediate/
+Saved/
+DerivedDataCache/
+
+# 패키징 결과 (아이콘과 PakBlacklist 목록만 추적)
+ORS_Unreal/Build/**
+!ORS_Unreal/Build/**/
+!ORS_Unreal/Build/**/*.ico
+!ORS_Unreal/Build/**/PakBlacklist*.txt
+
+# 맵 라이팅 빌드 결과 (에디터에서 다시 빌드)
+*_BuiltData.uasset
+
+# 개인 작업 폴더
+ORS_Unreal/Content/Developers/
+
+# ---- 외부 에셋 --------------------------------------------------
+# 별도 라이선스 사운드/모델 팩은 저장소에 넣지 않는다 (README "6.3 총성 사운드")
+ORS_Unreal/Content/MilitaryWeapSilver/
+
+# ---- IDE / 생성되는 프로젝트 파일 --------------------------------
+# .uproject 우클릭 → Generate Visual Studio project files 로 다시 만든다
+.vs/
+.vscode/
+.idea/
+*.sln
+*.slnx
+*.suo
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.opendb
+*.code-workspace
+*.xcodeproj
+*.xcworkspace
+.vsconfig
+
+# ---- 컴파일 산출물 ----------------------------------------------
+Prototype/bin/
+*.obj
+*.o
+*.pch
+*.gch
+*.pdb
+*.ilk
+*.exe
+*.dll
+*.lib
+*.a
+*.so
+*.dylib
+
+# ---- Python (에디터 스크립트) ------------------------------------
+__pycache__/
+*.py[cod]
+
+# ---- OS ---------------------------------------------------------
+Thumbs.db
+Desktop.ini
+.DS_Store
