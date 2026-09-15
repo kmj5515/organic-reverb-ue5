@@ -156,7 +156,9 @@ else
 
 ---
 
-## 6. 현재 작성된 코드 구조
+## 6. v0 초안 코드 구조 (`Docs/files/`)
+
+> 1단계 당시 기록이다. 프로토타입에서 결함 4건이 나와 Core는 `AcousticCore/`로 다시 썼고, 아래 Unreal 헤더 두 개는 컴파일되지 않아 폐기한 뒤 4단계에서 새 구조로 작성했다 ([architecture-design.md](architecture-design.md) §3.5). `Docs/files/`는 결함 재현 테스트용으로만 남겨 둔다.
 
 ```
 organic-reverb-architecture/
@@ -174,8 +176,8 @@ organic-reverb-architecture/
 - `Acoustic::FPortal` — 방-방 연결부(문/복도), 개구부 면적과 거리 정보
 - `Acoustic::FAcousticRoomGraph` — 방/포탈 컬렉션, 인접 리스트 관리
 - `Acoustic::FAcousticDiffusionSimulator` — `Tick(DeltaTime)`에서 RT60 갱신 → 인접 방 간 에너지 확산 → 자체 감쇠 적용. `GetWetLevel(RoomId)`로 결과 조회
-- `UAcousticGeometryScanner` — 6방향 레이캐스트로 방 치수 추정, 피직컬 머티리얼 → 흡음계수 매핑, 개구부 감지 (구현 예정)
-- `UOrganicReverbSubsystem` — 매 틱 시뮬레이터 갱신, `EmitAcousticEvent()`/`GetWetLevelAtLocation()` 게임플레이 API 제공, 디버그 히트맵 표시 (구현 예정)
+- `UAcousticGeometryScanner` — 6방향 레이캐스트로 방 치수 추정, 피직컬 머티리얼 → 흡음계수 매핑, 개구부 감지 (v0: 선언만)
+- `UOrganicReverbSubsystem` — 매 틱 시뮬레이터 갱신, `EmitAcousticEvent()`/`GetWetLevelAtLocation()` 게임플레이 API 제공, 디버그 히트맵 표시 (v0: 선언만)
 
 ---
 
@@ -187,7 +189,7 @@ organic-reverb-architecture/
 - [x] `UOrganicReverbSubsystem` 구현 (Tick, EmitAcousticEvent, 문 개폐, 콘솔 명령)
 - [x] 재질 흡음계수 연동 — `UAcousticPhysicalMaterial` (Physical Material 서브클래스)
 - [x] Submix Reverb 프리셋에 파라미터 실시간 반영 (MetaSounds 연결은 확장 단계)
-- [x] 디버그 히트맵 — DrawDebug 기반 바닥 히트맵 (Post Process 버전은 6단계 폴리싱)
+- [x] 디버그 히트맵 — DrawDebug 기반 바닥 히트맵 (6-3에서 디퍼드 데칼 히트맵으로 교체)
 - [x] 테스트 씬 생성 도구 — `AAcousticTestLayout` 프리셋 (씬 1·2·3·5 + 결합 공간). 씬 4(벽 너머 소리)는 OOE 구현 후
 - [x] 테스트 맵 5종 구성 + 오디오 에셋(Submix / Reverb 프리셋) 생성·연결 — `ORS_Unreal/Scripts/create_test_maps.py`, 5개 맵 모두 게임 모드에서 스캔 확인
 - [x] 에디터에서 PIE 청취 확인 + 튜닝 ([unreal-setup-guide.md](unreal-setup-guide.md))
@@ -204,8 +206,10 @@ organic-reverb-architecture/
 - [x] 5-6 청취 튜닝 — 회절 계수(문 모서리를 돌아도 −5 dB 정도로 약함), 벽 투과 손실, Wet 양
 
 ### 6단계 (최적화 / 폴리싱)
-- [ ] 비동기 스캔
-- [ ] Post Process 히트맵
-- [ ] 공기 흡음
-- [ ] 5-8 경로 당기기(string pulling) — 복도 분할 경계의 가상 꼭짓점 제거 → 회절/소리 방향 정확도 개선 (5단계에서 이동)
-- [ ] 5-5 전파 지연 — 총성 직접음 지연은 5-7에 포함. 시뮬레이터 에너지의 방 사이 전달 지연은 남음 (5단계에서 이동)
+상세 기록은 [architecture-design.md](architecture-design.md) §3.9 ~ §3.13.
+
+- [x] 6-1 공기 흡음 — Sabine 분모에 4mV 항. 잔향·잔향 결합·직접음이 같은 계수(`AirAbsorption::Coefficient()`) 공유. 30 m 홀 Mid 16.1 → 11.0 s, HF 비율 0.75 → 0.40
+- [x] 6-2 경로 당기기(string pulling) — 복도 분할 경계의 가상 꼭짓점 제거 (5-8에서 이동). 게임 모드 A/B 직접음 −33.3 → −33.1 dB, 로우패스 3.9 → 4.0 kHz
+- [x] 6-3 에너지 히트맵 — 포스트 프로세스 대신 디퍼드 데칼(`M_AcousticHeatmap`) + 방 번호 아틀라스 텍스처. 레벨 표면을 월드 좌표 기준으로 칠함
+- [x] 6-4 비동기 스캔 — 격자 스캔은 프레임당 예산(2 ms), 방 분할은 워커 스레드, 끝나면 그래프 교체. 26,082칸 스캔 40 ms를 19프레임에 분산
+- [x] 6-5 방 사이 전달 지연 — 포탈 지연 큐, (방 중심 → 문 → 옆방 중심) 거리 / 음속 (5-5에서 이동. 총성 직접음 지연은 5-7에 포함). 34.3 m 옆방 첫 도착 0.100 s, 틱 80 → 145 µs

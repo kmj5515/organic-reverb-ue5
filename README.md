@@ -4,7 +4,7 @@
 
 프리셋 리버브를 구역마다 바꿔 끼우는 대신, 레벨의 방 구조(크기, 재질, 문)를 자동으로 분석하고 방 사이를 흐르는 음향 에너지를 물리 모델로 계산해서 리버브 파라미터를 실시간으로 만든다. 알고리즘 본체는 엔진에 의존하지 않는 순수 C++로 작성했고, Unreal은 입출력 어댑터로만 붙어 있다.
 
-> 게임 오디오 포트폴리오 프로젝트 · 1~5단계 완료, 6단계 최적화 / 폴리싱 진행 중 — [진행 상황](#7-진행-상황)
+> 게임 오디오 포트폴리오 프로젝트 · 1~6단계 완료, 다음은 7단계 포트폴리오 문서화 — [진행 상황](#7-진행-상황)
 
 ---
 
@@ -274,7 +274,7 @@ UnrealEditor-Cmd.exe ORS_Unreal\ORS_Unreal.uproject -ExecCmds="Automation RunTes
 |---|---|
 | [Docs/organic-reverb-system-notes.md](Docs/organic-reverb-system-notes.md) | 리서치 노트와 단계별 작업 기록 |
 | [Docs/acoustics-fundamentals.md](Docs/acoustics-fundamentals.md) | 게임 음향 기초 이론 학습 노트 (유도, 예제 계산, 자가 점검) |
-| [Docs/architecture-design.md](Docs/architecture-design.md) | 설계 결정, 검증 결과, 알려진 한계 (2~4단계) |
+| [Docs/architecture-design.md](Docs/architecture-design.md) | 설계 결정, 검증 결과, 알려진 한계 (2~6단계) |
 | [Docs/unreal-setup-guide.md](Docs/unreal-setup-guide.md) | Unreal 에디터 사용법 (테스트 맵, 오디오 연결, 콘솔 명령, API) |
 
 ---
